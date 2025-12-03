@@ -142,23 +142,6 @@ std::ostream& operator<<(std::ostream &os, const Player &player) {
 //   (move x y)
 //
 // para colocar a ese jugador en el campo.
-//
-// Formación propuesta (lado izquierdo, 'l'):
-//
-//   1: Portero      -> (-50,   0)
-//   2: Defensa      -> (-40, -15)
-//   3: Defensa      -> (-40,  15)
-//   4: Defensa      -> (-35,  -5)
-//   5: Defensa      -> (-35,   5)
-//   6: Mediocentro  -> (-20, -20)
-//   7: Mediocentro  -> (-20,   0)
-//   8: Mediocentro  -> (-20,  20)
-//   9: Media punta  -> (-10,   0)
-//  10: Delantero    -> ( -5, -10)
-//  11: Delantero    -> ( -5,  10)
-//
-// Si el jugador está en el lado derecho ('r'), espejamos la X: x = -x,
-// para mantener la misma estructura táctica en el otro campo.
 // ---------------------------------------------------------------------------
 void place_initial_position(Player &player,
                             MinimalSocket::udp::Udp<true> &udp_socket,
@@ -189,11 +172,6 @@ void place_initial_position(Player &player,
             initial_pos.y = 0.0;
             break;
     }
-
-    // // Si jugamos en el lado derecho, espejamos la X para mantener simetría
-    // if (player.side == 'r') {
-    //     initial_pos.x = -initial_pos.x;
-    // }
 
     // Guardamos la posición calculada en el propio Player
     player.position = initial_pos;
@@ -280,6 +258,7 @@ int main(int argc, char *argv[])
     cout << "Waiting for an init message from server..." << endl;
 
     // Recibimos el primer mensaje del servidor.
+    // Ejemplo de entrada: "(init l 1 before_kick_off)"
     // NOTA: en un cliente más robusto, aquí haríamos un bucle leyendo
     //       server_param, player_param, etc., hasta encontrar el (init ...).
     auto received_message = udp_socket.receive(message_max_size);
