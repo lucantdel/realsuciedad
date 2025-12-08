@@ -6,10 +6,9 @@
 #include <chrono>
 #include <thread>
 
-// using namespace std;
-
 // ---------- ESTRUCTURAS DE DATOS ----------
 
+// Representa el lado del campo donde juega el equipo
 enum class Side
 {
     Left, Right, Unknown 
@@ -25,6 +24,7 @@ std::ostream& operator<<(std::ostream& os, Side s)
     return os;
 }
 
+// Coordenadas 2D en el campo
 struct Point
 {
     double x{0.0};
@@ -37,11 +37,12 @@ std::ostream& operator<<(std::ostream& os, const Point& p)
     return os;
 }
 
+// Información sobre un objeto visto: distancia, dirección y visibilidad
 struct ObjectInfo
 {
-    double dist{0.0};
-    double dir{0.0};
-    bool visible{false};
+    double dist{0.0};     // Distancia al objeto
+    double dir{0.0};      // Dirección en grados
+    bool visible{false};  // Si el objeto es visible
 };
 
 std::ostream& operator<<(std::ostream& os, const ObjectInfo& o)
@@ -52,12 +53,13 @@ std::ostream& operator<<(std::ostream& os, const ObjectInfo& o)
     return os;
 }
 
+// Información visual del jugador en un instante dado
 struct SeeInfo
 {
-    int time{0};
-    ObjectInfo ball{};
-    ObjectInfo own_goal{};
-    ObjectInfo opp_goal{};
+    int time{0};              // Tiempo de simulación
+    ObjectInfo ball{};        // Información del balón
+    ObjectInfo own_goal{};    // Información de portería propia
+    ObjectInfo opp_goal{};    // Información de portería rival
 };
 
 std::ostream& operator<<(std::ostream& os, const SeeInfo& s)
@@ -70,12 +72,13 @@ std::ostream& operator<<(std::ostream& os, const SeeInfo& s)
     return os;
 }
 
+// Información sensorial interna del jugador
 struct SenseInfo 
 {
-    int time{0};
-    double speed{0.0};
-    double stamina{0.0};
-    double headAngle{0.0};
+    int time{0};              // Tiempo de simulación
+    double speed{0.0};        // Velocidad actual
+    double stamina{0.0};      // Resistencia actual
+    double headAngle{0.0};    // Ángulo de la cabeza
 };
 
 std::ostream& operator<<(std::ostream& os, const SenseInfo& s)
@@ -88,6 +91,7 @@ std::ostream& operator<<(std::ostream& os, const SenseInfo& s)
     return os;
 }
 
+// Información completa del jugador
 struct PlayerInfo 
 {
     std::string team{""};
@@ -96,7 +100,7 @@ struct PlayerInfo
     std::string playMode{""};
     SeeInfo see{};
     SenseInfo sense{};
-    Point initialPosition{}; 
+    Point initialPosition{};  // Posición inicial asignada según el dorsal
 };
 
 std::ostream& operator<<(std::ostream &os, const PlayerInfo &player) 
@@ -110,13 +114,14 @@ std::ostream& operator<<(std::ostream &os, const PlayerInfo &player)
 
 // ---------- FUNCIONES AUXILIARES ----------
 
+// Calcula la posición inicial en el campo según el número de dorsal (1-11)
 Point calcKickOffPosition(int unum)
 {
     static const Point positions[11] = {
-        { -50.0,   0.0 },                                                       // Portero
-        { -40.0, -15.0 }, { -42.0,  -5.0 }, { -42.0,   5.0 }, { -40.0,  15.0 }, // Defensa
-        { -28.0, -10.0 }, { -22.0,   0.0 }, { -28.0,  10.0 },                   // Medios
-        { -15.0, -15.0 }, { -12.0,   0.0 }, { -15.0,  15.0 }                    // Delanteros
+        { -50.0,   0.0 },                                                       // 1: Portero
+        { -40.0, -15.0 }, { -42.0,  -5.0 }, { -42.0,   5.0 }, { -40.0,  15.0 }, // 2-5: Defensa
+        { -28.0, -10.0 }, { -22.0,   0.0 }, { -28.0,  10.0 },                   // 6-8: Medios
+        { -15.0, -15.0 }, { -12.0,   0.0 }, { -15.0,  15.0 }                    // 9-11: Delanteros
     };
 
     if (unum < 1 || unum > 11) {
@@ -143,9 +148,9 @@ std::string receiveMsgFromServer(MinimalSocket::udp::Udp<true> &udp_socket, std:
 
 // ---------- HELPERS DE PARSING ----------
 
+// Elimina espacios y paréntesis al inicio del string_view
 void skipDelims(std::string_view& sv)
 {
-    // Salta espacios y paréntesis
     const char* delims = " ()";
     size_t pos = sv.find_first_not_of(delims);
     if (pos == std::string_view::npos) {
@@ -155,6 +160,7 @@ void skipDelims(std::string_view& sv)
     }
 }
 
+// Extrae el siguiente token del string_view (palabra delimitada por espacios o paréntesis)
 std::string_view nextToken(std::string_view& sv)
 {
     skipDelims(sv);
@@ -170,6 +176,8 @@ std::string_view nextToken(std::string_view& sv)
     return tok;
 }
 
+// Busca y parsea la información de un objeto específico en el mensaje see
+// Retorna true si el objeto fue encontrado y parseado correctamente
 bool parseObjectInfo(std::string_view msg,
                       std::string_view objectTag,
                       ObjectInfo& out)
@@ -182,7 +190,7 @@ bool parseObjectInfo(std::string_view msg,
 
     std::string_view sv = msg.substr(pos + objectTag.size());
 
-    // Dos tokens numéricos: dist y dir
+    // Extraer distancia y dirección
     auto distTok = nextToken(sv);
     auto dirTok  = nextToken(sv);
 
@@ -199,10 +207,10 @@ bool parseObjectInfo(std::string_view msg,
 
 // ---------- FUNCIONES DE PARSING ----------
 
+// Parsea el mensaje de inicialización del servidor
+// Ejemplo: (init l 1 before_kick_off) -> lado izquierdo, dorsal 1
 void parseInitMsg(const std::string &msg, PlayerInfo &player)
 {
-    // (init l 1 before_kick_off)
-
     std::string_view sv = msg;
 
     auto cmdTok = nextToken(sv);
@@ -225,20 +233,19 @@ void parseInitMsg(const std::string &msg, PlayerInfo &player)
     player.initialPosition = position;
 }
 
+// Parsea el mensaje de visión del servidor
+// Ejemplo: (see 0 ... ((g r) 102.5 0) ... ((b) 49.4 0) ...)
 void parseSeeMsg(const std::string &msg, PlayerInfo &player)
 {
-    // EJEMPLO: (see 0 ... ((g r) 102.5 0) ... ((G) 2.5 180) ... ((b) 49.4 0) ...)
-
     std::string_view sv = msg;
 
-    auto cmdTok  = nextToken(sv); // "see"
-    auto timeTok = nextToken(sv); // tiempo
+    auto cmdTok  = nextToken(sv);
+    auto timeTok = nextToken(sv);
     player.see.time = std::stoi(std::string(timeTok));
 
-    // Balón
     parseObjectInfo(msg, "(b)", player.see.ball);
 
-    // Porterías
+    // Identificar porterías según el lado del jugador
     if (player.side == Side::Left) {
         // Nuestro lado es el izquierdo -> nuestra portería es g l, rival g r
         parseObjectInfo(msg, "(g l)", player.see.own_goal);
@@ -247,22 +254,20 @@ void parseSeeMsg(const std::string &msg, PlayerInfo &player)
         // Nuestro lado es el derecho -> nuestra portería es g r, rival g l
         parseObjectInfo(msg, "(g r)", player.see.own_goal);
         parseObjectInfo(msg, "(g l)", player.see.opp_goal);
-    } else {
-        // Si aún no sabemos el lado, mejor intentar ambas como opp_goal
-        parseObjectInfo(msg, "(g l)", player.see.opp_goal);
-        parseObjectInfo(msg, "(g r)", player.see.opp_goal);
-    }
+    } 
 }
 
+// Parsea el mensaje de información sensorial interna del jugador
+// Ejemplo: (sense_body 0 ... (stamina 8000 1 130600) (speed 0 0) (head_angle 0) ...)
 void parseSenseMsg(const std::string &msg, PlayerInfo &player)
 {
-    // EJEMPLO: (sense_body 0 ... (stamina 8000 1 130600) (speed 0 0) (head_angle 0) ...)
-
-    // Por implementar
+    // TODO: Implementar parsing completo de sense_body
 }
 
 // ---------- FUNCIONES PARA ENVIAR COMANDOS ----------
 
+// Envía el comando de inicialización al servidor
+// Los puertos 7001 y 8001 se asignan como porteros
 void sendInitCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp, MinimalSocket::Port this_socket_port, std::string team_name)
 {
     std::string init_msg;
@@ -274,12 +279,11 @@ void sendInitCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSoc
     }
 
     std::cout << "Sending init message: " << init_msg << std::endl;
-
     udp_socket.sendTo(init_msg, server_udp);
-
     std::cout << "Init message sent" << std::endl;
 }
 
+// Envía el comando para posicionar al jugador en su ubicación inicial
 void sendMoveCommand(PlayerInfo &player, MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp)
 {
     std::string move_cmd =
@@ -287,50 +291,44 @@ void sendMoveCommand(PlayerInfo &player, MinimalSocket::udp::Udp<true> &udp_sock
         " "      + std::to_string(player.initialPosition.y) + ")";
 
     std::cout << "Sending move command: " << move_cmd << std::endl;
-
     udp_socket.sendTo(move_cmd, server_udp);
-
     std::cout << "Move command sent" << std::endl;
 }
 
-// ---------- FUNCIONES DE DECISIÓN (Think-Act) ----------
+// ---------- FUNCIONES DE DECISIÓN ----------
 
+// Decide la acción a realizar basándose en la información visual del jugador
 std::string decideAction(const PlayerInfo &player)
 {
     std::string action_cmd;
 
-        // 1) Si no veo el balón, giro para buscarlo
+        // Si no ve el balón, girar para buscarlo
         if (!player.see.ball.visible) {
             action_cmd = "(turn 30)";
         } else {
             double ball_dist = player.see.ball.dist;
             double ball_dir  = player.see.ball.dir;
 
-            // 2) Balón lejos: orientarse y correr
+            // Balón lejos: orientarse y correr hacia él
             if (ball_dist > 1.0) {
-                // Si el ángulo es grande, primero giramos
                 if (std::abs(ball_dir) > 10.0) {
+                    // Ajustar orientación hacia el balón (limitado a ±60°)
                     double turnAngle = ball_dir;
-
-                    // Limitar el giro para no pedir algo extremo
                     if (turnAngle > 60.0) turnAngle = 60.0;
                     if (turnAngle < -60.0) turnAngle = -60.0;
 
                     action_cmd = "(turn " + std::to_string(turnAngle) + ")";
                 } else {
-                    // Ya más o menos orientados → correr hacia el balón
+                    // Ya orientado, correr hacia el balón
                     action_cmd = "(dash 90)";
                 }
             } else {
-                // 3) Balón cerca: chutar
+                // Balón cerca: intentar chutar
                 if (player.see.opp_goal.visible) {
                     double kickDir = player.see.opp_goal.dir;
                     action_cmd = "(kick 90 " + std::to_string(kickDir) + ")";
                 } else {
-                    // No vemos portería rival: chutar hacia delante
-                    // action_cmd = "(kick 80 0)";
-
-                    // Alternativamente, podríamos girar un poco para buscar la portería
+                    // Si no ve la portería rival, girar para buscarla
                     action_cmd = "(turn 30)";
                 }
             }
@@ -340,6 +338,7 @@ std::string decideAction(const PlayerInfo &player)
 
 int main(int argc, char *argv[])
 {
+    // Validar argumentos de línea de comandos
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " <team-name> <this-port>" << std::endl;
         return 1;
@@ -350,6 +349,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Creating a UDP socket on local port " << this_socket_port << std::endl;
 
+    // Crear socket UDP para comunicación con el servidor
     MinimalSocket::udp::Udp<true> udp_socket(
         this_socket_port,
         MinimalSocket::AddressFamily::IP_V4
@@ -363,6 +363,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Dirección del servidor rcssserver (puerto estándar 6000)
     MinimalSocket::Address server_address{"127.0.0.1", 6000};
 
     sendInitCommand(udp_socket, server_address, this_socket_port, team_name);
@@ -370,6 +371,7 @@ int main(int argc, char *argv[])
     std::size_t message_max_size = 1000;
     std::cout << "Waiting for an init message from server..." << std::endl;
 
+    // Recibir respuesta del servidor con la asignación de lado y dorsal
     auto received_message = udp_socket.receive(message_max_size);
 
     if (!received_message) {
@@ -380,22 +382,18 @@ int main(int argc, char *argv[])
     std::string received_message_content = received_message->received_message;
     std::cout << "Received message: " << received_message_content << std::endl;
 
-    // Dirección efectiva desde la que el servidor nos ha enviado este mensaje.
-    // Normalmente será también 6000, pero usamos la que nos llega para ser
-    // más correctos a nivel de red.
+    // Usar el puerto específico del servidor para las comunicaciones posteriores
     MinimalSocket::Address other_sender_udp = received_message->sender;
     MinimalSocket::Address server_udp{"127.0.0.1", other_sender_udp.getPort()};
 
-    // Creamos el jugador y parseamos el mensaje 'init'
+    // Parsear el mensaje de inicialización y configurar el jugador
     PlayerInfo player;
     parseInitMsg(received_message_content, player);
     std::cout << player << std::endl;
 
-    // Colocar al jugador en el campo según su dorsal y lado
     sendMoveCommand(player, udp_socket, server_udp);
 
-    // Mantenemos el proceso vivo para poder ver al jugador en el monitor
-    // y para que posteriormente puedas añadir el bucle Sense-Think-Act.
+    // Bucle principal: recibir mensajes del servidor y actuar
     while(true) {
         auto msg = receiveMsgFromServer(udp_socket, message_max_size);
 
@@ -403,8 +401,8 @@ int main(int argc, char *argv[])
 
         if (msg.rfind("(see", 0) == 0) {
             parseSeeMsg(msg, player);
-            std::cout << "[DEBUG] " << player.see << std::endl;
-            shouldAct = true;
+            // std::cout << "[DEBUG] " << player.see << std::endl;
+            shouldAct = true;  // Actuar después de recibir información visual
         } else if (msg.rfind("(sense_body", 0) == 0) {
             parseSenseMsg(msg, player);
         } 
@@ -417,7 +415,6 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Pequeña pausa para no saturar al servidor
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
