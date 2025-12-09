@@ -13,3 +13,4 @@ Este proyecto forma parte de un trabajo en equipo para un curso de C++, cuyo obj
 ## 📹 Entregas
 - [Video 0](https://youtu.be/UmU6TgmIqZI) – Entrega ejercicio Rick y Morty: añadir nombres de episodios y volver a preguntar hasta introducir cadena vacía.
 - [Video 1](https://youtu.be/-ySGlWRXZMk) – Primera entrega de RoboCup: se explica el funcionamiento del main y cómo se han colocado los jugadores en el campo.
+- [Video 2](https://youtu.be/4s99IWVr2H4) – Segunda entrega de RoboCup: los jugadores corren hacia el balón y chutan a portería.
