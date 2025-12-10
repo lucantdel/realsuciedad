@@ -3,9 +3,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <iostream>
 #include <MinimalSocket/udp/UdpSocket.h>
-
 #include <thread>
 
 
@@ -112,3 +110,4 @@ inline std::ostream& operator<<(std::ostream &os, const PlayerInfo &player)
        << ", position: (" << player.initialPosition.x << ", " << player.initialPosition.y << "))";
     return os;
 }
+

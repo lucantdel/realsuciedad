@@ -30,7 +30,6 @@ set(SOURCE_FILES
     positions.cpp
     decisions.cpp
     net.cpp
-    utils.cpp 
 )
 
 add_executable(player ${SOURCE_FILES})

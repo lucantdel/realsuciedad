@@ -3,7 +3,6 @@
 #include "positions.h"
 #include "decisions.h"
 #include "net.h"
-#include "utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -57,6 +56,7 @@ int main(int argc, char *argv[])
 
     // Parsear el mensaje de inicialización y configurar el jugador
     PlayerInfo player;
+    player.team = team_name;
     parseInitMsg(received_message_content, player);
     std::cout << player << std::endl;
 
