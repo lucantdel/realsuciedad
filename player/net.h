@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include <MinimalSocket/udp/UdpSocket.h>
 
 // Recibe un mensaje del servidor a través del socket UDP
 std::string receiveMsgFromServer(MinimalSocket::udp::Udp<true> &udp_socket, std::size_t message_max_size);

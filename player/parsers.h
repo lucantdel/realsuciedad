@@ -2,6 +2,7 @@
 
 #include "types.h"
 #include "positions.h"
+#include <string_view>
 
 // Elimina espacios y paréntesis al inicio del string_view
 void skipDelims(std::string_view& sv);
@@ -26,5 +27,5 @@ void parseSeeMsg(const std::string &msg, PlayerInfo &player);
 void parseSenseMsg(const std::string &msg, PlayerInfo &player);
 
 // Parsea el mensaje de audición del jugador
-// Ejemplo: 
+// Ejemplo: (hear 0 referee kick_off_l)
 void parseHearMsg(const std::string &msg, PlayerInfo &player);

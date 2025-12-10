@@ -1,5 +1,4 @@
 #include "parsers.h"
-#include <string>
 
 void skipDelims(std::string_view& sv)
 {
@@ -27,9 +26,7 @@ std::string_view nextToken(std::string_view& sv)
     return tok;
 }
 
-bool parseObjectInfo(std::string_view msg,
-                      std::string_view objectTag,
-                      ObjectInfo& out)
+bool parseObjectInfo(std::string_view msg, std::string_view objectTag, ObjectInfo& out)
 {
     size_t pos = msg.find(objectTag);
     if (pos == std::string_view::npos) {
@@ -107,5 +104,13 @@ void parseSenseMsg(const std::string &msg, PlayerInfo &player)
 
 void parseHearMsg(const std::string &msg, PlayerInfo &player)
 {
-    // TODO: Implementar parsing completo de hear
+    std::string_view sv = msg;
+
+    auto cmdTok  = nextToken(sv);
+
+    auto timeTok = nextToken(sv);
+
+    auto sourceTok = nextToken(sv);
+
+    auto messageTok = nextToken(sv);
 }

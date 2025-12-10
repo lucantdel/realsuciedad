@@ -3,6 +3,9 @@
 #include "positions.h"
 #include "decisions.h"
 #include "net.h"
+#include <MinimalSocket/udp/UdpSocket.h>
+#include <iostream>
+#include <thread>
 
 int main(int argc, char *argv[])
 {
@@ -59,6 +62,10 @@ int main(int argc, char *argv[])
     player.team = team_name;
     parseInitMsg(received_message_content, player);
     std::cout << player << std::endl;
+
+    sendEarCommand(udp_socket, server_udp);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     sendMoveCommand(udp_socket, server_udp, player);
 

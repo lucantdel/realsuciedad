@@ -2,9 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <string_view>
-#include <MinimalSocket/udp/UdpSocket.h>
-#include <thread>
 
 
 // Representa el lado del campo donde juega el equipo

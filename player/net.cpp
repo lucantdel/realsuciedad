@@ -1,4 +1,5 @@
 #include "net.h"
+#include <iostream>
 
 std::string receiveMsgFromServer(MinimalSocket::udp::Udp<true> &udp_socket, std::size_t message_max_size)
 {
