@@ -1,10 +1,9 @@
-#include <types.h>
-#include <parsers.h>
-#include <positions.h>
-#include <decisions.h>
-#include <net.h>
-#include <utils.h>
-#include <thread>
+#include "types.h"
+#include "parsers.h"
+#include "positions.h"
+#include "decisions.h"
+#include "net.h"
+#include "utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -61,7 +60,7 @@ int main(int argc, char *argv[])
     parseInitMsg(received_message_content, player);
     std::cout << player << std::endl;
 
-    sendMoveCommand(player, udp_socket, server_udp);
+    sendMoveCommand(udp_socket, server_udp, player);
 
     // Bucle principal: recibir mensajes del servidor y actuar
     while(true) {
@@ -80,8 +79,7 @@ int main(int argc, char *argv[])
         if (shouldAct) {
             std::string action_cmd = decideAction(player);
             if (!action_cmd.empty()) {
-                std::cout << "Sending command: " << action_cmd << std::endl;
-                udp_socket.sendTo(action_cmd + '\0', server_udp);
+                sendActionCommand(udp_socket, server_udp, action_cmd);
             }
         }
 

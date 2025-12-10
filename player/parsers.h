@@ -1,7 +1,7 @@
 #pragma once
 
-#include <types.h>
-#include <positions.h>
+#include "types.h"
+#include "positions.h"
 
 // Elimina espacios y paréntesis al inicio del string_view
 void skipDelims(std::string_view& sv);
@@ -27,4 +27,4 @@ void parseSenseMsg(const std::string &msg, PlayerInfo &player);
 
 // Parsea el mensaje de audición del jugador
 // Ejemplo: 
-void parseHeatMsg(const std::string &msg, PlayerInfo &player);
+void parseHearMsg(const std::string &msg, PlayerInfo &player);

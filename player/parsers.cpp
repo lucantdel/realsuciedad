@@ -104,7 +104,7 @@ void parseSenseMsg(const std::string &msg, PlayerInfo &player)
     // TODO: Implementar parsing completo de sense_body
 }
 
-void parseHeatMsg(const std::string &msg, PlayerInfo &player)
+void parseHearMsg(const std::string &msg, PlayerInfo &player)
 {
     // TODO: Implementar parsing completo de hear
 }

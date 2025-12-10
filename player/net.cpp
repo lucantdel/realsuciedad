@@ -15,6 +15,11 @@ std::string receiveMsgFromServer(MinimalSocket::udp::Udp<true> &udp_socket, std:
     return received_message_content;
 }
 
+void sendCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp, const std::string &cmd)
+{
+    udp_socket.sendTo(cmd + '\0', server_udp);
+}
+
 void sendInitCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp, MinimalSocket::Port this_socket_port, std::string team_name)
 {
     std::string init_msg;
@@ -26,26 +31,33 @@ void sendInitCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSoc
     }
 
     std::cout << "Sending init message: " << init_msg << std::endl;
-    udp_socket.sendTo(init_msg, server_udp);
+    sendCommand(udp_socket, server_udp, init_msg);
     std::cout << "Init message sent" << std::endl;
 }
 
 void sendEarCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp)
 {
-    std::string hear_msg = "(ear on)";
+    std::string hear_cmd = "(ear on)";
     
-    std::cout << "Sending hear message: " << hear_msg << std::endl;
-    udp_socket.sendTo(hear_msg, server_udp);
+    std::cout << "Sending hear message: " << hear_cmd << std::endl;
+    sendCommand(udp_socket, server_udp, hear_cmd);
     std::cout << "Hear message sent" << std::endl;
 }
 
-void sendMoveCommand(PlayerInfo &player, MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp)
+void sendMoveCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp, PlayerInfo &player)
 {
     std::string move_cmd =
         "(move " + std::to_string(player.initialPosition.x) +
         " "      + std::to_string(player.initialPosition.y) + ")";
 
     std::cout << "Sending move command: " << move_cmd << std::endl;
-    udp_socket.sendTo(move_cmd, server_udp);
+    sendCommand(udp_socket, server_udp, move_cmd);
     std::cout << "Move command sent" << std::endl;
+}
+
+void sendActionCommand(MinimalSocket::udp::Udp<true> &udp_socket, const MinimalSocket::Address &server_udp, const std::string &action_cmd) 
+{
+    std::cout << "Sending action command: " << action_cmd << std::endl;
+    sendCommand(udp_socket, server_udp, action_cmd);
+    std::cout << "Action command sent" << std::endl;
 }

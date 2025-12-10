@@ -6,6 +6,8 @@
 #include <iostream>
 #include <MinimalSocket/udp/UdpSocket.h>
 
+#include <thread>
+
 
 // Representa el lado del campo donde juega el equipo
 enum class Side
@@ -13,7 +15,7 @@ enum class Side
     Left, Right, Unknown 
 };
 
-std::ostream& operator<<(std::ostream& os, Side s)
+inline std::ostream& operator<<(std::ostream& os, Side s)
 {
     switch (s) {
         case Side::Left:    os << "Left"; break;
@@ -30,7 +32,7 @@ struct Point
     double y{0.0};
 };
 
-std::ostream& operator<<(std::ostream& os, const Point& p)
+inline std::ostream& operator<<(std::ostream& os, const Point& p)
 {
     os << "Point(x=" << p.x << ", y=" << p.y << ")";
     return os;
@@ -44,7 +46,7 @@ struct ObjectInfo
     bool visible{false};  // Si el objeto es visible
 };
 
-std::ostream& operator<<(std::ostream& os, const ObjectInfo& o)
+inline std::ostream& operator<<(std::ostream& os, const ObjectInfo& o)
 {
     os << "ObjectInfo(dist=" << o.dist
        << ", dir=" << o.dir
@@ -61,7 +63,7 @@ struct SeeInfo
     ObjectInfo opp_goal{};    // Información de portería rival
 };
 
-std::ostream& operator<<(std::ostream& os, const SeeInfo& s)
+inline std::ostream& operator<<(std::ostream& os, const SeeInfo& s)
 {
     os << "SeeInfo(time=" << s.time
        << ", ball=" << s.ball
@@ -80,7 +82,7 @@ struct SenseInfo
     double headAngle{0.0};    // Ángulo de la cabeza
 };
 
-std::ostream& operator<<(std::ostream& os, const SenseInfo& s)
+inline std::ostream& operator<<(std::ostream& os, const SenseInfo& s)
 {
     os << "SenseInfo(time=" << s.time
        << ", speed=" << s.speed
@@ -102,7 +104,7 @@ struct PlayerInfo
     Point initialPosition{};  // Posición inicial asignada según el dorsal
 };
 
-std::ostream& operator<<(std::ostream &os, const PlayerInfo &player) 
+inline std::ostream& operator<<(std::ostream &os, const PlayerInfo &player) 
 {
     os << "Player created (side: " << player.side
        << ", number: " << player.number
