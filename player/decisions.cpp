@@ -72,15 +72,39 @@ std::string playOnDecision(PlayerInfo &player)
         }
         else 
         {
+            // --- LÓGICA DE DISPARO (CORREGIDA) ---
+            // Tenemos el balón controlado (dist <= 1.0)
+            
+            double kickAngle;
+            
+            // OPCIÓN A: Veo la portería -> Uso el dato visual (más preciso a corto plazo)
             if (player.see.oppGoal.visible)
             {
-                // Chutar a portería (usamos el ángulo visual directo)
-                action_cmd = "(kick 100 " + std::to_string(player.see.oppGoal.dir) + ")";
+                kickAngle = player.see.oppGoal.dir;
             }
+            // OPCIÓN B: No veo la portería -> Uso MATEMÁTICAS (Coordenadas absolutas)
             else
             {
-                action_cmd = "(turn 90)";
+                double x_porteria = 52.5; 
+                double y_porteria = 0.0;
+                if (player.side == Side::Right) {
+                    x_porteria = -52.5; // Invertir X para el lado derecho
+                }
+
+                // B. CALCULO DEL TIRO
+                // Ángulo global desde el robot hasta el centro de la portería
+                double anguloGlobalMeta = anguloHacia(player.x_abs, player.y_abs, x_porteria, y_porteria);
+                
+                // Ángulo relativo (cuánto debo girar el pie respecto a mi cuerpo)
+                kickAngle = anguloGlobalMeta - player.dir_abs;
+
+                // C. NORMALIZACIÓN (EL PASO QUE FALTABA)
+                // Esto asegura que si la resta da 350, se convierta en -10
+                kickAngle = -normalizaAngulo(kickAngle);
             }
+
+            // Ejecutamos el tiro con el ángulo decidido (sea visual o calculado)
+            action_cmd = "(kick 100 " + std::to_string(kickAngle) + ")";
         }
     }
     return action_cmd;
