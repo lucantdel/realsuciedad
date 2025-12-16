@@ -1,4 +1,6 @@
 #include "parsers.h"
+#include <cmath>
+#include <sstream>
 
 void skipDelims(std::string_view& sv)
 {
@@ -174,4 +176,74 @@ void parseHearMsg(const std::string &msg, PlayerInfo &player, GameState &gameSta
     updateScoreFromGoalToken(messageTok, gameState);
 
     gameState.playMode = mapRefereeTokenToPlayMode(std::string(messageTok));
+}
+
+std::vector<FlagInfo> parseVisibleFlags(const std::string &seeMsg)
+{
+    std::vector<FlagInfo> visibleFlags;
+    const std::string &s = seeMsg;
+    std::size_t start = 0;
+    const std::size_t N = s.size();
+
+    // Función auxiliar para eliminar los espacios en blanco al principio y al final de una cadena
+    auto trim = [](std::string &str){
+        std::size_t a = 0;
+        while (a < str.size() && std::isspace((unsigned char)str[a])) ++a; // Eliminar espacios al principio
+        std::size_t b = str.size();
+        while (b > a && std::isspace((unsigned char)str[b-1])) --b; // Eliminar espacios al final
+        str = str.substr(a, b-a);
+    };
+
+    // Bucle para recorrer todo el mensaje en busca de flags
+    while (start < N) {
+        // buscar la próxima ocurrencia de "(f" o "(g" o "(b"
+        std::size_t pos_f = s.find("(f", start);
+        std::size_t pos_g = s.find("(g", start);
+        std::size_t pos_b = s.find("(b", start);
+
+        // Determinar cuál de las posiciones es la más cercana
+        std::size_t pos = std::string::npos;
+        if (pos_f != std::string::npos) pos = pos_f;
+        if (pos_g != std::string::npos && (pos == std::string::npos || pos_g < pos)) pos = pos_g;
+        if (pos_b != std::string::npos && (pos == std::string::npos || pos_b < pos)) pos = pos_b;
+
+        // Si no se encuentran flags, salimos del bucle
+        if (pos == std::string::npos) break;
+
+        // encontrar el cierre de ese paréntesis correspondiente (primer ')' tras pos)
+        std::size_t close = s.find(')', pos);
+        if (close == std::string::npos) break; // formato raro -> salir
+
+        // nombre entre '(' y ')', por ejemplo "f c" o "f t l 40"
+        std::string name = s.substr(pos + 1, close - (pos + 1)); // quitar '('
+        trim(name);
+
+        // validar nombre con FLAG_POSITIONS
+        if (FLAG_POSITIONS.find(name) != FLAG_POSITIONS.end()) {
+            // extraer números que siguen después de close
+            // tomamos una ventana corta a partir de close+1 para parsear dist y dir
+            std::size_t num_start = close + 1;
+            // aumentar la ventana si hace falta, pero limitarla para eficiencia
+            std::size_t len = std::min<std::size_t>(N - num_start, 128);
+            std::string tail = s.substr(num_start, len); // Extraer la parte del mensaje que contiene los números
+            std::istringstream iss(tail); // Convertir la parte extraída a un stream para parsear los números
+            double dist = 0.0, dir = 0.0;
+            // Si se pudieron leer correctamente los números de distancia y dirección
+            if ( (iss >> dist >> dir) ) {
+                FlagInfo fi;
+                fi.name = name;
+                fi.dist = dist;
+                fi.dir  = dir;
+                fi.visible = true;
+                fi.pos = FLAG_POSITIONS.at(name);
+                visibleFlags.push_back(fi);
+            }
+            // si no se pudieron leer números, ignoramos esta ocurrencia
+        }
+
+        // avanzar start para seguir buscando (evitar loops infinitos)
+        start = close + 1;
+    }
+
+    return visibleFlags;
 }

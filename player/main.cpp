@@ -78,13 +78,57 @@ int main(int argc, char *argv[])
         bool shouldAct = false;
 
         if (msg.rfind("(see", 0) == 0) {
+            std::cout << "Received message: " << msg << std::endl;
             parseSeeMsg(msg, player);
             std::cout << "[DEBUG] " << player.see << std::endl;
+            // Obtener las dos mejores banderas para calcular la posición
+            auto [flag1, flag2] = getTwoBestFlags(msg);
+            std::cout << "Flag1: " << flag1.name << " dist=" << flag1.dist
+                << " dir=" << flag1.dir
+                << " pos=(" << flag1.pos.x << "," << flag1.pos.y << ")" << std::endl;
+
+            std::cout << "Flag2: " << flag2.name << " dist=" << flag2.dist
+                << " dir=" << flag2.dir
+                << " pos=(" << flag2.pos.x << "," << flag2.pos.y << ")" << std::endl;
+
+            if (!flag1.name.empty() && !flag2.name.empty()) {
+
+                // Calcular la posición del jugador a partir de las dos banderas
+                std::pair<FlagInfo, FlagInfo> flags = {flag1, flag2};
+                Point last = {player.x_abs, player.y_abs};
+
+                Point pos = calcularPosicionJugador(flags, last);
+
+                // Actualizar la posición del jugador
+                player.x_abs = pos.x;
+                player.y_abs = pos.y;
+
+                // Calcular la orientación (dirección) del jugador usando la bandera más cercana
+                player.dir_abs = calcularOrientacion(pos, flag1); 
+
+                std::cout << "[INFO] Pos: (" << pos.x << ", " << pos.y 
+                          << ") | Dir: " << player.dir_abs << "º" << std::endl;
+
+                // Comprobar si el jugador está dentro de su zona permitida
+                Zona z = definirZonaJugador(player);
+                if (player.x_abs >= z.x_min && player.x_abs <= z.x_max &&
+                    player.y_abs >= z.y_min && player.y_abs <= z.y_max)
+                {
+                    std::cout << "Jugador " << player.number
+                              << " está dentro de su zona permitida.\n";
+                }
+                else
+                {
+                    std::cout << "Jugador " << player.number
+                              << " está fuera de su zona permitida.\n";
+                }
+            }
             shouldAct = true;  // Actuar después de recibir información visual
         // } else if (msg.rfind("(sense_body", 0) == 0) {
         //     parseSenseMsg(msg, player);
         //     std::cout << "[DEBUG] " << player.sense << std::endl;
         } else if (msg.rfind("(hear", 0) == 0) {
+            std::cout << "Received message: " << msg << std::endl;
             parseHearMsg(msg, player, game_state);
             std::cout << "[DEBUG] " << game_state << std::endl;
         }

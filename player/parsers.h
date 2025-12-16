@@ -19,3 +19,6 @@ void parseSenseMsg(const std::string &msg, PlayerInfo &player);
 // Parsea el mensaje de audición del jugador
 // Ejemplo: (hear 0 referee kick_off_l)
 void parseHearMsg(const std::string &msg, PlayerInfo &player, GameState &gameState);
+
+// Parsea y devuelve una lista de banderas visibles en el mensaje de visión
+std::vector<FlagInfo> parseVisibleFlags(const std::string &see_msg);

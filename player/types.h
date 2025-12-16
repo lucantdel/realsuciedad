@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 
 // Representa el lado del campo donde juega el equipo
@@ -56,6 +57,18 @@ struct Point
 {
     double x{0.0};
     double y{0.0};
+};
+
+struct Zona {
+    double x_min, x_max, y_min, y_max;
+};
+
+struct FlagInfo {
+    std::string name;
+    double dist;
+    double dir;
+    bool visible;
+    Point pos; // coordenadas absolutas desde FLAG_POSITIONS
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Point& p)
@@ -127,6 +140,11 @@ struct PlayerInfo
     SeeInfo see{};
     SenseInfo sense{};
     Point initialPosition{};  // Posición inicial asignada según el dorsal
+
+    // posición absoluta
+    float x_abs{0.0f};
+    float y_abs{0.0f};
+    float dir_abs{0.0f};
 };
 
 inline std::ostream& operator<<(std::ostream &os, const PlayerInfo &player) 

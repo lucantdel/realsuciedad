@@ -11,7 +11,7 @@ std::string receiveMsgFromServer(MinimalSocket::udp::Udp<true> &udp_socket, std:
     }
 
     std::string received_message_content = received_message->received_message;
-    std::cout << "Received message: " << received_message_content << std::endl;
+    // std::cout << "Received message: " << received_message_content << std::endl;
 
     return received_message_content;
 }
