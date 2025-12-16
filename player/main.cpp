@@ -79,14 +79,14 @@ int main(int argc, char *argv[])
 
         if (msg.rfind("(see", 0) == 0) {
             parseSeeMsg(msg, player);
-            // std::cout << "[DEBUG] " << player.see << std::endl;
+            std::cout << "[DEBUG] " << player.see << std::endl;
             shouldAct = true;  // Actuar después de recibir información visual
-        } else if (msg.rfind("(sense_body", 0) == 0) {
-            parseSenseMsg(msg, player);
-            // std::cout << "[DEBUG] " << player.sense << std::endl;
+        // } else if (msg.rfind("(sense_body", 0) == 0) {
+        //     parseSenseMsg(msg, player);
+        //     std::cout << "[DEBUG] " << player.sense << std::endl;
         } else if (msg.rfind("(hear", 0) == 0) {
             parseHearMsg(msg, player, game_state);
-            // std::cout << "[DEBUG] " << game_state << std::endl;
+            std::cout << "[DEBUG] " << game_state << std::endl;
         }
 
         if (shouldAct) {

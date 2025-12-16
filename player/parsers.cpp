@@ -53,20 +53,25 @@ bool parseObjectInfo(std::string_view msg, std::string_view objectTag, ObjectInf
 
 PlayMode mapRefereeTokenToPlayMode(std::string_view tok)
 {
-    if (tok == "before_kick_off") return PlayMode::BeforeKickOff;
-    if (tok == "play_on")         return PlayMode::PlayOn;
+    std::cout << "[DEBUG] Mapping referee token to PlayMode: " << tok << std::endl;
 
-    if (tok == "kick_off_l")      return PlayMode::KickOff_Left;
-    if (tok == "kick_off_r")      return PlayMode::KickOff_Right;
+    if (tok == "before_kick_off")           return PlayMode::BeforeKickOff;
+    if (tok == "play_on")                   return PlayMode::PlayOn;
 
-    if (tok == "kick_in_l")       return PlayMode::KickIn_Left;
-    if (tok == "kick_in_r")       return PlayMode::KickIn_Right;
+    if (tok == "kick_off_l")                return PlayMode::KickOff_Left;
+    if (tok == "kick_off_r")                return PlayMode::KickOff_Right;
 
-    if (tok == "corner_kick_l")   return PlayMode::Corner_Left;
-    if (tok == "corner_kick_r")   return PlayMode::Corner_Right;
+    if (tok == "kick_in_l")                 return PlayMode::KickIn_Left;
+    if (tok == "kick_in_r")                 return PlayMode::KickIn_Right;
 
-    if (tok == "goal_kick_l")     return PlayMode::GoalKick_Left;
-    if (tok == "goal_kick_r")     return PlayMode::GoalKick_Right;
+    if (tok == "corner_kick_l")             return PlayMode::Corner_Left;
+    if (tok == "corner_kick_r")             return PlayMode::Corner_Right;
+
+    if (tok == "goal_kick_l")               return PlayMode::GoalKick_Left;
+    if (tok == "goal_kick_r")               return PlayMode::GoalKick_Right;
+
+    if (tok.compare(0, 6, "goal_l") == 0)   return PlayMode::Goal_Left;
+    if (tok.compare(0, 6, "goal_r") == 0)   return PlayMode::Goal_Right;
 
     return PlayMode::Unknown;
 }

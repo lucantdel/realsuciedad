@@ -40,10 +40,19 @@ std::string playOnDecision(const PlayerInfo &player)
     return action_cmd;
 }
 
+std::string beforeKickOffDecision(const PlayerInfo &player)
+{
+    return "(move " + std::to_string(player.initialPosition.x) + " " + std::to_string(player.initialPosition.y) + ")";
+}
+
 std::string decideAction(const PlayerInfo &player, const GameState &gameState)
 {
     if (gameState.playMode == PlayMode::PlayOn) {
         return playOnDecision(player);
+    } if (gameState.playMode == PlayMode::BeforeKickOff ||
+               gameState.playMode == PlayMode::Goal_Left ||
+               gameState.playMode == PlayMode::Goal_Right) {
+        return beforeKickOffDecision(player);
     }
     
     return "";
