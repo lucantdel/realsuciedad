@@ -59,6 +59,12 @@ struct Point
     double y{0.0};
 };
 
+inline std::ostream& operator<<(std::ostream& os, const Point& p)
+{
+    os << "Point(x=" << p.x << ", y=" << p.y << ")";
+    return os;
+}
+
 struct Zona {
     double x_min, x_max, y_min, y_max;
 };
@@ -70,12 +76,6 @@ struct FlagInfo {
     bool visible;
     Point pos; // coordenadas absolutas desde FLAG_POSITIONS
 };
-
-inline std::ostream& operator<<(std::ostream& os, const Point& p)
-{
-    os << "Point(x=" << p.x << ", y=" << p.y << ")";
-    return os;
-}
 
 // Información sobre un objeto visto: distancia, dirección y visibilidad
 struct ObjectInfo

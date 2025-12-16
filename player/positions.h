@@ -59,9 +59,8 @@ Zona definirZonaJugador(PlayerInfo &p);
 
 std::pair<FlagInfo, FlagInfo> getTwoBestFlags(const std::string &see_msg);
 
-std::vector<Point> corteCircunferencias(
-        float x1, float y1, float r1,
-        float x2, float y2, float r2);
+std::vector<Point> corteCircunferencias(float x1, float y1, float r1, float x2, float y2, float r2);
+
 Point calcularPosicionJugador(const std::pair<FlagInfo,FlagInfo>& flags, const Point& last_pos);
 
 double normalizaAngulo(double ang);
