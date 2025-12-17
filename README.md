@@ -1,6 +1,6 @@
 # Real Suciedad
 
-<img src="/home/lucas/realsuciedad/realsuciedad.png">
+<img src="./realsuciedad.png">
 
 ## 👥 Miembros del equipo
 
