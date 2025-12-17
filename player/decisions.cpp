@@ -115,21 +115,108 @@ std::string beforeKickOffDecision(PlayerInfo &player)
     return "(move " + std::to_string(player.initialPosition.x) + " " + std::to_string(player.initialPosition.y) + ")";
 }
 
+bool isOurKickOff(const PlayerInfo &player, const GameState &gameState)
+{
+    if (gameState.playMode == PlayMode::KickOff_Left && player.side == Side::Left)
+        return true;
+    if (gameState.playMode == PlayMode::KickOff_Right && player.side == Side::Right)
+        return true;
+    return false;
+}
+
+bool isOurGoalKick(const PlayerInfo &player, const GameState &gameState)
+{
+    if (gameState.playMode == PlayMode::GoalKick_Left && player.side == Side::Left)
+        return true;
+    if (gameState.playMode == PlayMode::GoalKick_Right && player.side == Side::Right)
+        return true;
+    return false;
+}
+
+bool isOurKickIn(const PlayerInfo &player, const GameState &gameState)
+{
+    if (gameState.playMode == PlayMode::KickIn_Left && player.side == Side::Left)
+        return true;
+    if (gameState.playMode == PlayMode::KickIn_Right && player.side == Side::Right)
+        return true;
+    return false;
+}
+
+bool isOurCorner(const PlayerInfo &player, const GameState &gameState)
+{
+    if (gameState.playMode == PlayMode::Corner_Left && player.side == Side::Left)
+        return true;
+    if (gameState.playMode == PlayMode::Corner_Right && player.side == Side::Right)
+        return true;
+    return false;
+}
+
+bool isOurFreeKick(const PlayerInfo &player, const GameState &gameState)
+{
+    if (gameState.playMode == PlayMode::FreeKick_Left && player.side == Side::Left)
+        return true;
+    if (gameState.playMode == PlayMode::FreeKick_Right && player.side == Side::Right)
+        return true;
+    return false;
+}
+
+bool isOurPenaltyKick(const PlayerInfo &player, const GameState &gameState)
+{
+    if (gameState.playMode == PlayMode::PenaltyKick_Left && player.side == Side::Left)
+        return true;
+    if (gameState.playMode == PlayMode::PenaltyKick_Right && player.side == Side::Right)
+        return true;
+    return false;
+}
+
+std::string turnToFaceBall(PlayerInfo &player)
+{
+    if (!player.see.ball.visible)
+        return "(turn 90)"; // Buscar balón
+    else
+        return "(turn " + std::to_string(player.see.ball.dir) + ")";
+}
+
 std::string decideAction(PlayerInfo &player, const GameState &gameState)
 {
-    if (gameState.playMode == PlayMode::PlayOn) {
+    if (gameState.playMode == PlayMode::PlayOn) { // JUGAR NORMAL
         return playOnDecision(player);
-    } if (gameState.playMode == PlayMode::BeforeKickOff ||
+    } 
+    if (gameState.playMode == PlayMode::BeforeKickOff || // TP AL SACAR [TRAS GOL]
                gameState.playMode == PlayMode::Goal_Left ||
                gameState.playMode == PlayMode::Goal_Right) {
         return beforeKickOffDecision(player);
-    } if (gameState.playMode == PlayMode::KickOff_Left ||
+    } 
+    if (gameState.playMode == PlayMode::KickIn_Left || // FALTAS / CORNERS / SAQUES DE BANDA / SAQUE DE CENTRO
+               gameState.playMode == PlayMode::KickIn_Right ||
+               gameState.playMode == PlayMode::Corner_Left ||
+               gameState.playMode == PlayMode::Corner_Right ||
+               gameState.playMode == PlayMode::FreeKick_Left ||
+               gameState.playMode == PlayMode::FreeKick_Right || 
+               gameState.playMode == PlayMode::KickOff_Left ||
                gameState.playMode == PlayMode::KickOff_Right) {
-        if (!player.see.ball.visible)
-            return "(turn 90)";
-        else
-            return "(turn " + std::to_string(player.see.ball.dir) + ")";
+        if (isOurKickIn(player, gameState) || isOurCorner(player, gameState) || isOurFreeKick(player, gameState) || isOurKickOff(player, gameState)) {
+            return playOnDecision(player);
+        } else {
+            return turnToFaceBall(player);
+        }
+        return playOnDecision(player);
+    } if (gameState.playMode == PlayMode::GoalKick_Left || // SAQUE DE PORTERÍA
+               gameState.playMode == PlayMode::GoalKick_Right) {
+        if (isOurGoalKick(player, gameState) && player.number==1) {
+            return playOnDecision(player);
+        } else {
+            return turnToFaceBall(player);
+        }
+        return playOnDecision(player);
+    } if (gameState.playMode == PlayMode::PenaltyKick_Left || // PENALTI
+               gameState.playMode == PlayMode::PenaltyKick_Right) {
+        if (isOurPenaltyKick(player, gameState) && player.number==10) {
+            return playOnDecision(player);
+        } else {
+            return turnToFaceBall(player);
+        }
+        return playOnDecision(player);
     }
-    
     return "";
 }

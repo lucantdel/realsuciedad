@@ -29,7 +29,9 @@ enum class PlayMode
     KickIn_Left, KickIn_Right,
     Corner_Left, Corner_Right,
     GoalKick_Left, GoalKick_Right,
-    Goal_Left, Goal_Right
+    Goal_Left, Goal_Right,
+    FreeKick_Left, FreeKick_Right,
+    PenaltyKick_Left, PenaltyKick_Right
 };
 
 inline std::ostream& operator<<(std::ostream& os, PlayMode pm)
@@ -47,6 +49,10 @@ inline std::ostream& operator<<(std::ostream& os, PlayMode pm)
         case PlayMode::GoalKick_Right:  os << "GoalKick_Right"; break;
         case PlayMode::Goal_Left:       os << "Goal_Left";      break;
         case PlayMode::Goal_Right:      os << "Goal_Right";     break;
+        case PlayMode::FreeKick_Left:    os << "FreeKick_Left";   break;
+        case PlayMode::FreeKick_Right:   os << "FreeKick_Right";  break;
+        case PlayMode::PenaltyKick_Left:  os << "PenaltyKick_Left"; break;
+        case PlayMode::PenaltyKick_Right: os << "PenaltyKick_Right";break;
         default:                        os << "Unknown";        break;
     }
     return os;

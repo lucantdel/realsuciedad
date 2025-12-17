@@ -75,6 +75,12 @@ PlayMode mapRefereeTokenToPlayMode(std::string_view tok)
     if (tok.compare(0, 6, "goal_l") == 0)   return PlayMode::Goal_Left;
     if (tok.compare(0, 6, "goal_r") == 0)   return PlayMode::Goal_Right;
 
+    if(tok == "free_kick_l")               return PlayMode::FreeKick_Left;
+    if(tok == "free_kick_r")               return PlayMode::FreeKick_Right;
+
+    if(tok == "penalty_kick_l")            return PlayMode::PenaltyKick_Left;
+    if(tok == "penalty_kick_r")            return PlayMode::PenaltyKick_Right;
+
     return PlayMode::Unknown;
 }
 

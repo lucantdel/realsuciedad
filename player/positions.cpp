@@ -31,10 +31,10 @@ Zona definirZonaJugador(PlayerInfo &p) {
             zona = { -52.5, -15.0, 10.0, 34.0 };
             break;
         case 3:
-            zona = { -52.5, -20.0, 2.0, 20.0 };
+            zona = { -52.5, -20.0, -2.0, 20.0 };
             break;
         case 4:
-            zona = { -52.5, -20.0, -20.0, -2.0 };
+            zona = { -52.5, -20.0, -20.0, 2.0 };
             break;
         case 5:
             zona = { -52.5, -15.0, -34.0, -10.0 };
