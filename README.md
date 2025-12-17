@@ -1,5 +1,7 @@
 # Real Suciedad
 
+<img src="/home/lucas/realsuciedad/realsuciedad.png">
+
 ## 👥 Miembros del equipo
 
 * [Lucas Antoñanzas](https://github.com/lucantdel)
@@ -17,6 +19,7 @@ Este proyecto forma parte de un trabajo en equipo para un curso de C++, cuyo obj
 * [Video 1](https://youtu.be/-ySGlWRXZMk) – Primera entrega de RoboCup: se explica el funcionamiento del main y cómo se han colocado los jugadores en el campo.
 * [Video 2](https://youtu.be/4s99IWVr2H4) – Segunda entrega de RoboCup: los jugadores corren hacia el balón y chutan a portería.
 * [Video 3](https://youtu.be/f2kfskHUSrM) – Última entrega de RoboCup: los jugadores mantienen un posicionamiento mínimo por áreas y se parsean los mensajes de árbitros para futuros comportamientos en distintas situaciones del partido, además de lo anteriormente desarrollado.
+* [Video 4](https://youtu.be/YNLHP2CXZOA) - Tomas falsas de la última entrega.
 
 ## ▶️ Ejecución del proyecto
 
@@ -35,4 +38,8 @@ Para ejecutar el equipo en el **RoboCup Soccer Simulator**, es necesario seguir 
 3. Lanzar los jugadores del equipo (en otra terminal):
    ```bash
    ./realsuciedad/players/launchplayers.sh
+   ```
+   Si da error al intentar lanzar jugadores ejecutar:
+   ```bash
+   chmod +x ./realsuciedad/players/launchplayers.sh
    ```
